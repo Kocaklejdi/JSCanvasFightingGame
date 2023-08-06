@@ -135,6 +135,29 @@ class enemy extends player{
         this.hp = 100;
         this.xSpeed = 4;  
     }
+    drawSelf(){
+        if(!(this.controls.left || this.controls.right || this.controls.attack || this.controls.jump)){
+            this.noOfFrames = 4;
+            this.image = idle;
+        } else if(this.controls.left || this.controls.right){
+            this.noOfFrames = 6;
+            this.image = running;
+        }
+        if(this.controls.attack){
+            this.weapon.swing(this.x + 10,this.y + 10,this);
+            this.noOfFrames = 4;
+            this.image = attacking
+        } else {
+            this.weapon.x = -100;
+            this.weapon.y = -100;
+        }
+        ctx.save();
+        ctx.translate(this.x,this.y);
+        ctx.scale(-1,1);
+        ctx.drawImage(this.image,32*this.frame,0,32,32,0,0,this.width,this.height);
+        ctx.restore();
+
+    }
     ai(other){
         if(this.x - 20 > other.x){
             this.controls.left = true;

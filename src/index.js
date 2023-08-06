@@ -54,6 +54,8 @@ function drawGame(){
   collision(player1.weapon,enemy1)
 }
 
-setInterval(()=>{player1.frame += 1},100)
+setInterval(()=>{player1.frame += 1;
+  enemy1.frame += 1;
+},100)
 
 setInterval(drawGame,1000/25)
