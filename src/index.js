@@ -31,7 +31,15 @@ function collision(player1,player2){
     player1.y + player1.height > player2.y)
 {
     player2.hp --;
+    //console.log("hit")
 }
+}
+
+function enemySwordCollision(player,enemy){
+  if(!(enemy.x + enemy.width < player.x || enemy.x > player.x + player.width)){
+    console.log("hit");
+    player.hp -= 5;
+  }
 }
 
 
@@ -39,10 +47,12 @@ function collision(player1,player2){
 const player1 = new player(100,60);
 const enemy1 = new enemy(200,60);
 const hp = document.getElementById("hp");
+const enemyHp = document.getElementById("enemyHp")
 
 
 function drawGame(){
-  hp.style.width = `${(enemy1.hp/100) * 500}px`;
+  hp.style.width = `${(player1.hp/100) * 500}px`;
+  enemyHp.style.width = `${(enemy1.hp/100) * 500}px`;
   drawBackground();
   checkPlayerBounds(player1);
   player1.drawSelf();
@@ -52,6 +62,8 @@ function drawGame(){
   enemy1.update();
   enemy1.ai(player1);
   collision(player1.weapon,enemy1)
+  enemySwordCollision(player1,enemy1.weapon)
+  //console.table(enemy1.weapon)
 }
 
 setInterval(()=>{player1.frame += 1;

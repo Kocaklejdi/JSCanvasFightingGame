@@ -1,6 +1,4 @@
-
-
-class controls{
+    class controls{
     constructor(){
         this.left = false;
         this.right = false;
@@ -20,7 +18,7 @@ class controls{
             if(e.key === " "){
                 this.jump = true;
             }
-            if(e.key === "z"){
+            if(e.key === "z" || e.key === "Z"){
                 if(this.lastPressed <= (Date.now()-this.cooldown)){
                     this.attack = true;
                     this.lastPressed = Date.now();
@@ -51,13 +49,13 @@ class sword{
         this.height = height;
     }
     swing(x,y,other){
-        this.x = other.x;
-        this.y = other.y;
-        // ctx.beginPath();
-        // ctx.rect(x,y,this.width,this.height);
-        // ctx.fillStyle = 'black';
-        // ctx.fill();
-        // ctx.stroke();
+        this.x = other.x + 10;
+        this.y = other.y + 10;
+        ctx.beginPath();
+        ctx.rect(this.x,this.y,this.width,this.height);
+        ctx.fillStyle = 'black';
+        ctx.fill();
+        ctx.stroke();
     }
 }
 
@@ -68,6 +66,7 @@ const jumping = document.getElementById("running");
 
 class player{
     constructor(x,y){
+        this.hp = 100;
         this.x = x;
         this.y = y;
         this.image = idle;
@@ -96,8 +95,13 @@ class player{
         } else {
             this.weapon.x = -100;
             this.weapon.y = -100;
-        }
+        }   
         ctx.drawImage(this.image,32*this.frame,0,32,32,this.x,this.y,this.width,this.height);
+        // ctx.beginPath();
+        // ctx.rect(this.x,this.y,this.width,this.height);
+        // ctx.fillStyle = 'black';
+        // ctx.fill();
+        // ctx.stroke();
     }
     update(){
         if(this.frame > this.noOfFrames){
@@ -133,7 +137,8 @@ class enemy extends player{
     constructor(x,y){
         super(x,y);
         this.hp = 100;
-        this.xSpeed = 4;  
+        this.xSpeed = 4;
+        this.weapon = new sword(this.x,this.y,-30,10);  
     }
     drawSelf(){
         if(!(this.controls.left || this.controls.right || this.controls.attack || this.controls.jump)){
@@ -144,22 +149,27 @@ class enemy extends player{
             this.image = running;
         }
         if(this.controls.attack){
-            this.weapon.swing(this.x + 10,this.y + 10,this);
+            this.weapon.swing(this.x - 10,this.y + 10,this);
             this.noOfFrames = 4;
             this.image = attacking
         } else {
-            this.weapon.x = -100;
-            this.weapon.y = -100;
+            this.weapon.x = -200;
+            this.weapon.y = -200;
         }
+        // ctx.rect(this.x,this.y,this.width,this.height);
+        // ctx.fillStyle = 'black';
+        // ctx.fill();
+        // ctx.stroke();
         ctx.save();
         ctx.translate(this.x,this.y);
         ctx.scale(-1,1);
-        ctx.drawImage(this.image,32*this.frame,0,32,32,0,0,this.width,this.height);
+        ctx.drawImage(this.image,32*this.frame,0,32,32,-32,0,this.width,this.height);
         ctx.restore();
+
 
     }
     ai(other){
-        if(this.x - 20 > other.x){
+        if(this.x - 40 > other.x){
             this.controls.left = true;
             this.controls.right = false;
         } else {
@@ -168,6 +178,11 @@ class enemy extends player{
         if(this.x < other.x){
             this.controls.right = true;
             this.controls.left = false;
+        }
+        if(this.x - 40 <= other.x){
+            this.controls.attack = true;
+            this.controls.lastPressed = Date.now();
+            setTimeout(()=>{this.controls.attack = false},600)
         }
         if(other.controls.attack){
             if(Math.random() < 0.5){
